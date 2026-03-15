@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AboutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,13 @@ use App\Http\Controllers\Api\Admin\ContactMessageController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\EducationController;
 use App\Http\Controllers\Api\Admin\ExperienceController;
+use App\Http\Controllers\Api\Admin\NewsletterSubscriberController;
+use App\Http\Controllers\Api\Admin\ProjectImageController;
+use App\Http\Controllers\Api\Admin\SectionControlController;
+use App\Http\Controllers\Api\Admin\SeoMetaController;
+use App\Http\Controllers\Api\Admin\SocialLinkController;
 use App\Http\Controllers\Api\Admin\VisitorLogController;
+use App\Http\Controllers\Api\PublicController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -48,30 +55,26 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('education', EducationController::class);
         Route::apiResource('experiences', ExperienceController::class);
         Route::apiResource('visitor-logs', VisitorLogController::class)->except(['store', 'update']);
-        
-        // Singletons
         Route::get('settings', [SettingController::class, 'index']);
         Route::put('settings', [SettingController::class, 'update']);
-        Route::get('about', [\App\Http\Controllers\Api\Admin\AboutController::class, 'index']);
-        Route::put('about', [\App\Http\Controllers\Api\Admin\AboutController::class, 'update']);
-
-        // Missing Resources
-        Route::apiResource('social-links', \App\Http\Controllers\Api\Admin\SocialLinkController::class);
-        Route::apiResource('project-images', \App\Http\Controllers\Api\Admin\ProjectImageController::class)->except(['update']);
-        Route::apiResource('seo-metas', \App\Http\Controllers\Api\Admin\SeoMetaController::class);
-        Route::apiResource('section-controls', \App\Http\Controllers\Api\Admin\SectionControlController::class);
-        Route::apiResource('newsletter-subscribers', \App\Http\Controllers\Api\Admin\NewsletterSubscriberController::class)->only(['index', 'destroy']);
+        Route::get('about', [AboutController::class, 'index']);
+        Route::put('about', [AboutController::class, 'update']);
+        Route::apiResource('social-links', SocialLinkController::class);
+        Route::apiResource('project-images', ProjectImageController::class)->except(['update']);
+        Route::apiResource('seo-metas', SeoMetaController::class);
+        Route::apiResource('section-controls', SectionControlController::class);
+        Route::apiResource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'destroy']);
     });
 });
 
 // Public Routes
 Route::prefix('public')->group(function () {
-    Route::get('projects', [\App\Http\Controllers\Api\PublicController::class, 'projects']);
-    Route::get('projects/{slug}', [\App\Http\Controllers\Api\PublicController::class, 'projectDetails']);
-    Route::get('blog-posts', [\App\Http\Controllers\Api\PublicController::class, 'blogPosts']);
-    Route::get('blog-posts/{slug}', [\App\Http\Controllers\Api\PublicController::class, 'blogPostDetails']);
-    Route::get('about', [\App\Http\Controllers\Api\PublicController::class, 'about']);
-    Route::get('settings', [\App\Http\Controllers\Api\PublicController::class, 'settings']);
-    Route::post('contact', [\App\Http\Controllers\Api\PublicController::class, 'submitContact']);
-    Route::post('visitor-logs', [\App\Http\Controllers\Api\Admin\VisitorLogController::class, 'store']);
+    Route::get('projects', [PublicController::class, 'projects']);
+    Route::get('projects/{slug}', [PublicController::class, 'projectDetails']);
+    Route::get('blog-posts', [PublicController::class, 'blogPosts']);
+    Route::get('blog-posts/{slug}', [PublicController::class, 'blogPostDetails']);
+    Route::get('about', [PublicController::class, 'about']);
+    Route::get('settings', [PublicController::class, 'settings']);
+    Route::post('contact', [PublicController::class, 'submitContact']);
+    Route::post('visitor-logs', [VisitorLogController::class, 'store']);
 });
