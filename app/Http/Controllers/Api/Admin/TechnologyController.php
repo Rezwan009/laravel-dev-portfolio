@@ -19,6 +19,10 @@ class TechnologyController extends Controller
     {
         $validated = $request->validated();
 
+        if ($request->hasFile('icon')) {
+            $validated['icon'] = $request->file('icon')->store('technologies', 'public');
+        }
+
         $technology = Technology::create($validated);
         return response()->json($technology, 201);
     }
@@ -33,6 +37,13 @@ class TechnologyController extends Controller
         $technology = Technology::findOrFail($id);
         
         $validated = $request->validated();
+
+        if ($request->hasFile('icon')) {
+            if ($technology->icon) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($technology->icon);
+            }
+            $validated['icon'] = $request->file('icon')->store('technologies', 'public');
+        }
 
         $technology->update($validated);
         return response()->json($technology);

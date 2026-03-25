@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AboutController;
+use App\Http\Controllers\Api\Admin\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('about', [AboutController::class, 'update']);
         Route::apiResource('social-links', SocialLinkController::class);
         Route::apiResource('project-images', ProjectImageController::class)->except(['update']);
+        Route::apiResource('services', ServiceController::class);
         Route::apiResource('seo-metas', SeoMetaController::class);
         Route::apiResource('section-controls', SectionControlController::class);
         Route::apiResource('newsletter-subscribers', NewsletterSubscriberController::class)->only(['index', 'destroy']);

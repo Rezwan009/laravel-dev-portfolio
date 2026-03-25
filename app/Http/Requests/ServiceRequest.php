@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TechnologyRequest extends FormRequest
+class ServiceRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,9 +14,10 @@ class TechnologyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'content' => 'nullable|string',
             'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'color' => 'nullable|string|max:20',
             'is_active' => 'nullable|boolean',
             'sort_order' => 'nullable|integer',
         ];
