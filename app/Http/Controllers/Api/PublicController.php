@@ -11,6 +11,11 @@ use App\Models\BlogPost;
 use App\Models\About;
 use App\Models\Setting;
 use App\Models\ContactMessage;
+use App\Models\Service;
+use App\Models\Testimonial;
+use App\Models\Education;
+use App\Models\Experience;
+use App\Models\SocialLink;
 
 class PublicController extends Controller
 {
@@ -51,5 +56,30 @@ class PublicController extends Controller
         $message = ContactMessage::create($validated);
 
         return response()->json(['message' => 'Message sent successfully!', 'data' => $message]);
+    }
+
+    public function services()
+    {
+        return Service::orderBy('sort_order')->latest()->get();
+    }
+
+    public function testimonials()
+    {
+        return Testimonial::latest()->get();
+    }
+
+    public function education()
+    {
+        return Education::orderBy('start_date', 'desc')->get();
+    }
+
+    public function experience()
+    {
+        return Experience::orderBy('start_date', 'desc')->get();
+    }
+
+    public function socialLinks()
+    {
+        return SocialLink::orderBy('sort_order')->get();
     }
 }

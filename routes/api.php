@@ -77,6 +77,11 @@ Route::prefix('public')->group(function () {
     Route::get('blog-posts/{slug}', [PublicController::class, 'blogPostDetails']);
     Route::get('about', [PublicController::class, 'about']);
     Route::get('settings', [PublicController::class, 'settings']);
+    Route::get('services', [PublicController::class, 'services']);
+    Route::get('testimonials', [PublicController::class, 'testimonials']);
+    Route::get('education', [PublicController::class, 'education']);
+    Route::get('experiences', [PublicController::class, 'experience']);
+    Route::get('social-links', [PublicController::class, 'socialLinks']);
     Route::post('contact', [PublicController::class, 'submitContact']);
     Route::post('visitor-logs', [VisitorLogController::class, 'store']);
 });
