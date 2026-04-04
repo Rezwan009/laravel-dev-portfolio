@@ -60,7 +60,12 @@ class PublicController extends Controller
 
     public function services()
     {
-        return Service::orderBy('sort_order')->latest()->get();
+        return Service::where('is_active', true)->orderBy('sort_order')->get();
+    }
+
+    public function serviceDetails($slug)
+    {
+        return Service::where('slug', $slug)->where('is_active', true)->firstOrFail();
     }
 
     public function testimonials()

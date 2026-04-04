@@ -78,6 +78,7 @@ Route::prefix('public')->group(function () {
     Route::get('about', [PublicController::class, 'about']);
     Route::get('settings', [PublicController::class, 'settings']);
     Route::get('services', [PublicController::class, 'services']);
+    Route::get('services/{slug}', [PublicController::class, 'serviceDetails']);
     Route::get('testimonials', [PublicController::class, 'testimonials']);
     Route::get('education', [PublicController::class, 'education']);
     Route::get('experiences', [PublicController::class, 'experience']);
