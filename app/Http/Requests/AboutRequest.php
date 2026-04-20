@@ -17,6 +17,7 @@ class AboutRequest extends FormRequest
             'full_name' => 'nullable|string|max:255',
             'title' => 'nullable|string|max:255',
             'bio' => 'nullable|string',
+            'moto' => 'nullable|string',
             'profile_image' => 'nullable|image|max:2048',
             'resume' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
             'email' => 'nullable|email|max:255',
