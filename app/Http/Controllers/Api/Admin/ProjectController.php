@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ProjectRequest;
 
 use App\Models\Project;
+use App\Models\ProjectImage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,7 +40,14 @@ class ProjectController extends Controller
             $project->categories()->sync($validated['categories']);
         }
 
-        return response()->json($project->load(['technologies', 'categories']), 201);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imageFile) {
+                $path = $imageFile->store('projects/gallery', 'public');
+                $project->images()->create(['image' => $path]);
+            }
+        }
+
+        return response()->json($project->load(['technologies', 'categories', 'images']), 201);
     }
 
     public function show(string $id)
@@ -74,7 +82,14 @@ class ProjectController extends Controller
             $project->categories()->sync($validated['categories']);
         }
 
-        return response()->json($project->load(['technologies', 'categories']));
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imageFile) {
+                $path = $imageFile->store('projects/gallery', 'public');
+                $project->images()->create(['image' => $path]);
+            }
+        }
+
+        return response()->json($project->load(['technologies', 'categories', 'images']));
     }
 
     public function destroy(string $id)

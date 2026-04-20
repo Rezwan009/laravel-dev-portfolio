@@ -23,6 +23,8 @@ class ProjectRequest extends FormRequest
             'status' => 'required|in:draft,published',
             'technologies' => 'nullable|array',
             'categories' => 'nullable|array',
+            'images' => 'nullable|array',
+            'images.*' => 'image|max:5120', // Support up to 5MB per image
         ];
     }
 }

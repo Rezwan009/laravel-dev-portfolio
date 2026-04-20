@@ -18,11 +18,11 @@ class Project extends Model
 
     public function technologies()
     {
-        return $this->belongsToMany(Technology::class, 'project_technologies');
+        return $this->belongsToMany(Technology::class, 'project_technologies')->withTimestamps();
     }
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'project_categories');
+        return $this->belongsToMany(Category::class, 'project_categories')->withTimestamps();
     }
 }
