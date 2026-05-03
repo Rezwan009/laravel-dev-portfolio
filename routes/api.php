@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Admin Routes
@@ -85,4 +85,5 @@ Route::prefix('public')->group(function () {
     Route::get('social-links', [PublicController::class, 'socialLinks']);
     Route::post('contact', [PublicController::class, 'submitContact']);
     Route::post('visitor-logs', [VisitorLogController::class, 'store']);
+    Route::get('/github-stats', [PublicController::class, 'getStats']);
 });

@@ -16,6 +16,9 @@ use App\Models\Testimonial;
 use App\Models\Education;
 use App\Models\Experience;
 use App\Models\SocialLink;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PublicController extends Controller
 {
@@ -86,5 +89,70 @@ class PublicController extends Controller
     public function socialLinks()
     {
         return SocialLink::orderBy('sort_order')->get();
+    }
+
+    public function getStats()
+    {
+        $config = config('services.github');
+        $username = $config['username'];
+        $token = $config['token'];
+
+        if (!$username) {
+            return response()->json(['error' => 'GitHub username not configured'], 500);
+        }
+
+        $stats = Cache::remember('github_stats', 86400, function () use ($username, $token) {
+            try {
+                // 1. Fetch repositories (up to 100) to get stars and forks
+                $repoResponse = Http::withHeaders([
+                    'Authorization' => $token ? "Bearer {$token}" : '',
+                    'Accept' => 'application/vnd.github+json',
+                ])->get("https://api.github.com/users/{$username}/repos", [
+                    'per_page' => 100,
+                    'type' => 'owner',
+                    'sort' => 'updated'
+                ]);
+
+                if (!$repoResponse->successful()) {
+                    throw new \Exception('Failed to fetch repositories: ' . $repoResponse->body());
+                }
+
+                $repos = $repoResponse->json();
+                $totalStars = 0;
+                $totalForks = 0;
+
+                foreach ($repos as $repo) {
+                    $totalStars += $repo['stargazers_count'] ?? 0;
+                    $totalForks += $repo['forks_count'] ?? 0;
+                }
+
+                // 2. Fetch total commits using the Search API (much faster than N+1 requests)
+                $commitSearchResponse = Http::withHeaders([
+                    'Authorization' => $token ? "Bearer {$token}" : '',
+                    'Accept' => 'application/vnd.github+json',
+                ])->get("https://api.github.com/search/commits", [
+                    'q' => "author:{$username}",
+                    'per_page' => 1
+                ]);
+
+                $totalCommits = 0;
+                if ($commitSearchResponse->successful()) {
+                    $totalCommits = $commitSearchResponse->json()['total_count'] ?? 0;
+                }
+
+                return [
+                    'repositories' => count($repos),
+                    'stars' => $totalStars,
+                    'forks' => $totalForks,
+                    'commits' => $totalCommits,
+                ];
+
+            } catch (\Exception $e) {
+                Log::error('GitHub API Error: ' . $e->getMessage());
+                throw $e; // Rethrow to avoid caching error
+            }
+        });
+
+        return response()->json($stats);
     }
 }
